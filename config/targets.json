@@ -1,0 +1,28 @@
+[
+    {
+      "labels": {
+        "job": "jmx"
+      },
+      "targets": [
+        "b-1.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001",
+        "b-2.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001",
+        "b-3.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001",
+        "b-4.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001",
+        "b-5.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001",
+        "b-6.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11001"
+      ]
+    },
+    {
+      "labels": {
+        "job": "node"
+      },
+      "targets": [
+        "b-1.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002",
+        "b-2.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002",
+        "b-3.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002",
+        "b-4.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002",
+        "b-5.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002",
+        "b-6.ABC.XYZ.c3.kafka.ap-southeast-2.amazonaws.com:11002"
+      ]
+    }
+  ]

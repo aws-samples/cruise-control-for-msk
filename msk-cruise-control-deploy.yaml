@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  AWS CloudFormation for Cruise control (https://github.com/linkedin/cruise-control). 
+  Automated deployment template of Cruise Control for Amazon MSK (https://github.com/linkedin/cruise-control). 
 Parameters:
   InstanceType:
     Description: Cruise Control EC2 instance type

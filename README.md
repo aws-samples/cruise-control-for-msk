@@ -69,9 +69,12 @@ After the stack is created, the following outputs will be available:
 
 
 Note: During the CloudFormation stack creation process, you will need to specify a subnet and security group associated with your Amazon MSK cluster. The EC2 instance hosting Prometheus and Cruise Control will be launched within the chosen subnet and assigned the specified security group. This configuration ensures that the EC2 instance can communicate seamlessly with the Kafka brokers in your MSK cluster.
-```
+
 
 ## Sample output
+
 ![CC template](images/cc-1.png)
+
 ![CC output](images/cc-2.png)
+
 ![CC webUI](images/cc-3.png)

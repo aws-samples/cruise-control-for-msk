@@ -1,6 +1,6 @@
 
 # Automated deployment template of Cruise Control for Amazon MSK
-Automated deployment template of Cruise Control for [Amazon MSK](https://aws.amazon.com/msk/), a new AWS CloudFormation template that simplifies the deployment and management of [Cruise Control](https://github.com/linkedin/cruise-control) and Prometheus(https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html) for monitoring and rebalancing Amazon MSK clusters.
+Automated deployment template of Cruise Control for [Amazon MSK](https://aws.amazon.com/msk/), a new AWS CloudFormation template that simplifies the deployment and management of [Cruise Control](https://github.com/linkedin/cruise-control) and [Prometheus](https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html) for monitoring and rebalancing Amazon MSK clusters.
 Amazon MSK is a fully managed service that makes it easy to build and run applications that use Apache Kafka to process streaming data. With this new CloudFormation template, you can now seamlessly integrate Cruise Control and Prometheus to gain deeper insights into your Amazon MSK cluster's performance and optimize resource utilization.
 
 By automating the deployment and configuration of Cruise Control and Prometheus, you can significantly improve operational efficiency, reduce the time and effort required for manual setup and maintenance, and allow you to focus on higher-value tasks.
@@ -20,11 +20,11 @@ The CloudFormation template itself streamlines the deployment process by automat
 ## Prerequisites
 
 - An existing Amazon MSK Kafka cluster
-- Enable open monitoring with Prometheus (https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html)
+- Enable open monitoring with [Prometheus] (https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html)
 - An S3 bucket with the following files:
-  - `targets.json` (Prometheus targets configuration)
-  - `prometheus.yml` (Prometheus configuration)
-  - `capacityCores.json` (Cruise Control capacity configuration)
+  - [`targets.json`](config\targets.json) (Prometheus targets configuration)
+  - [`prometheus.yml`](prometheus.yml) (Prometheus configuration)
+  - [`capacityCores.json`](config\capacityCores.json) (Cruise Control capacity configuration)
 - An EC2 security group that has access to your target MSK cluster. The simplest approach would be to use the same security group attached to your MSK cluster, which includes a self-referencing inbound rule allowing all traffic.
 
 ## Parameters

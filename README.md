@@ -12,7 +12,7 @@ The CloudFormation template itself streamlines the deployment process by automat
 ## Key features
 - Automated provisioning of an EC2 instance with Cruise Control and Prometheus pre-configured.
 - Support for Amazon MSK provisioned mode cluster.
-- Flexible authentication with PlainText or IAM. 
+- Flexible authentication with [PlainText and IAM](https://docs.aws.amazon.com/msk/latest/developerguide/kafka_apis_iam.html). 
 - No Zookeeper dependency for Cruise Control.
 - Easily customize Prometheus targets, Cruise Control capacity settings, and other configurations by providing your own configuration files stored in an S3 bucket.
 

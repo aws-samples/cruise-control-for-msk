@@ -1,0 +1,205 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation for Cruise control (https://github.com/linkedin/cruise-control). 
+Parameters:
+  InstanceType:
+    Description: Cruise Control EC2 instance type
+    Type: String
+    Default: m5.large
+    AllowedValues:
+      - m5.large
+    ConstraintDescription: Must be a valid EC2 instance type.
+  targetjsonpath:
+    Description: Prometheus targets.json S3 location
+    Type: 'String'
+    Default: s3://BUCKETNAME/PATH/targets.json
+  prometheusymlpath:
+    Description: Prometheus prometheus.yml S3 location
+    Type: 'String'
+    Default: s3://BUCKETNAME/PATH/prometheus.yml
+  AuthType:
+    Type: String
+    Description: Select the MSK Auth type
+    Default: IAM
+    AllowedValues:
+      - IAM
+      - PlainText
+  bootstrapservers:
+    Description: Choose MSK bootstrap servers for the correct Authentication type (IAM, Plaintext)
+    Type: 'String'
+    Default: b-6.SAMPLE.kafka.ap-southeast-2.amazonaws.com:9098,b-5.SAMPLE.kafka.ap-southeast-2.amazonaws.com:9098,b-4.SAMPLE.kafka.ap-southeast-2.amazonaws.com:9098
+  capacityCores:
+    Description: CruiseControl capacityCores.json S3 location
+    Type: 'String'
+    Default: s3://BUCKETNAME/PATH/capacityCores.json
+  
+  SubnetId:
+    Description: Enter the subnet id associated with your MSK cluster
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-123SAMPLE
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: Enter the Security Group ID associated with your MSK cluster
+    Default: sg-0cSAMPLE  
+Mappings:
+  AWSInstanceType2Arch:
+    m5.large:
+      Arch: HVM64
+  AWSRegionArch2AMI:
+    us-east-1:
+      HVM64: ami-0a699202e5027c10d
+    us-east-2:
+      HVM64: ami-00cda30cf72311684
+    us-west-1:
+      HVM64: ami-050c61fa1bff25e5a
+    us-west-2:
+      HVM64: ami-089313d40efd067a9
+    ap-southeast-4:
+      HVM64: ami-0f68ab67368add313
+    ap-south-1:
+      HVM64: ami-0451f2687182e0411
+    ap-northeast-3:
+      HVM64: ami-0a4cde46c8ee66595
+    ap-northeast-2:
+      HVM64: ami-050a4617492ff5822
+    ap-southeast-1:
+      HVM64: ami-0fd77db8c27ba5cc5
+    ap-southeast-2:
+      HVM64: ami-0386c125da6e09148
+    ap-northeast-1:
+      HVM64: ami-0705806411562a051
+    ca-central-1:
+      HVM64: ami-044fb30603665a990
+    eu-west-2:
+      HVM64: ami-004961349a19d7a8f
+    eu-west-3:
+      HVM64: ami-0720246d895625a23
+    eu-north-1:
+      HVM64: ami-0f0ec0d37d04440e3
+    sa-east-1:
+      HVM64: ami-013e1515e9ea9d99e
+
+    
+Resources:
+  WebServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !FindInMap 
+        - AWSRegionArch2AMI
+        - !Ref 'AWS::Region'
+        - !FindInMap 
+          - AWSInstanceType2Arch
+          - !Ref InstanceType
+          - Arch
+      InstanceType: !Ref InstanceType
+      #SubnetId: !Ref SubnetId
+      #SecurityGroupIds:
+      #  - !Ref SecurityGroupId
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !Ref SubnetId
+          GroupSet:
+            - !Ref SecurityGroupId
+      IamInstanceProfile:
+        Ref: InstanceProfile
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 200
+            VolumeType: gp2
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+          sudo systemctl start amazon-ssm-agent
+          sudo systemctl enable amazon-ssm-agent
+          sudo yum update -y
+          sudo yum -y install git
+          sudo yum install java-17-amazon-corretto-devel -y
+          #mkdir -p /home/ec2-user/cc
+          mkdir -p /home/ec2-user/prometheus
+          cd /home/ec2-user
+          wget -O prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v2.51.1/prometheus-2.51.1.linux-amd64.tar.gz
+          tar -xzvf prometheus.tar.gz -C prometheus --strip-components=1
+          cd /home/ec2-user/prometheus
+          aws s3 cp ${targetjsonpath} targets.json > cplog.txt 2>&1
+          aws s3 cp ${prometheusymlpath} prometheus.yml
+          ./prometheus > prometheus_output.log 2>&1 &
+          cd /home/ec2-user
+          git clone https://github.com/linkedin/cruise-control.git && cd cruise-control/
+          mkdir logs
+          touch logs/kafka-cruise-control.out
+          ./gradlew jar copyDependantLibs
+          sed -i "s/localhost:9092/${bootstrapservers}/g" config/cruisecontrol.properties
+          sed -i "s/com.linkedin.kafka.cruisecontrol.monitor.sampling.CruiseControlMetricsReporterSampler/com.linkedin.kafka.cruisecontrol.monitor.sampling.prometheus.PrometheusMetricSampler/g" config/cruisecontrol.properties
+          sed -i "s/webserver.http.port=9090/webserver.http.port=9091/g" config/cruisecontrol.properties
+          aws s3 cp ${capacityCores} config/capacityCores.json 
+          sed -i "s/capacity.config.file=config\/capacityJBOD.json/capacity.config.file=config\/capacityCores.json/g" config/cruisecontrol.properties
+          sed -i "$ a\kafka.broker.failure.detection.enable=true" config/cruisecontrol.properties
+          sed -i '/^zookeeper\.connect/d' config/cruisecontrol.properties
+          if [[ "${AuthType}" == "IAM" ]]; then
+            sed -i "$ a\security.protocol=SASL_SSL" config/cruisecontrol.properties
+            sed -i "$ a\sasl.mechanism=AWS_MSK_IAM" config/cruisecontrol.properties
+            sed -i "$ a\sasl.jaas.config=software.amazon.msk.auth.iam.IAMLoginModule required;" config/cruisecontrol.properties
+            sed -i "$ a\sasl.client.callback.handler.class=software.amazon.msk.auth.iam.IAMClientCallbackHandler" config/cruisecontrol.properties
+            wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.9/aws-msk-iam-auth-1.1.9-all.jar && mv aws-msk-iam-auth-1.1.9-all.jar cruise-control/build/libs/
+          fi
+          echo "prometheus.server.endpoint=localhost:9090" >> config/cruisecontrol.properties
+          
+          wget https://github.com/linkedin/cruise-control-ui/releases/download/v0.3.4/cruise-control-ui-0.3.4.tar.gz
+          tar -xvzf cruise-control-ui-0.3.4.tar.gz
+          ./kafka-cruise-control-stop.sh ; ./kafka-cruise-control-start.sh -daemon config/cruisecontrol.properties
+    
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref InstanceRole
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        
+      Policies:
+      - PolicyName: KafkaClusterAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "kafka-cluster:*"
+              Resource: "*"
+
+Outputs:
+  PrometheusURL:
+    Description: URL for prometheus
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - WebServerInstance
+          - PrivateIp
+        - ':9090'
+  CruiseControlURL:
+    Description: URL for Cruise control web UI
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - WebServerInstance
+          - PrivateIp
+        - ':9091'

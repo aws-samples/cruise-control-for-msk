@@ -68,7 +68,9 @@ After the stack is created, the following outputs will be available:
 6. Once the CloudFormation stack creation is complete, use the output URLs provided by CloudFormation to access the Prometheus and Cruise Control web UI. **However, please allow an additional 15 minutes before accessing those URLs, as the installation of Cruise Control may still be in progress.**
 
 
-Note: During the CloudFormation stack creation process, you will need to specify a subnet and security group associated with your Amazon MSK cluster. The EC2 instance hosting Prometheus and Cruise Control will be launched within the chosen subnet and assigned the specified security group. This configuration ensures that the EC2 instance can communicate seamlessly with the Kafka brokers in your MSK cluster.
+Notes: 
+- During the CloudFormation stack creation process, you will need to specify a subnet and security group associated with your Amazon MSK cluster. The EC2 instance hosting Prometheus and Cruise Control will be launched within the chosen subnet and assigned the specified security group. This configuration ensures that the EC2 instance can communicate seamlessly with the Kafka brokers in your MSK cluster.
+- You can access the EC2 instance using AWS Systems Manager Session Manager (https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), which has been preconfigured to allow access through the AWS Management Console without requiring an SSH key.
 
 
 ## Sample output

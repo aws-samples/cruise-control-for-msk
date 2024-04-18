@@ -1,4 +1,4 @@
-```markdown
+
 # Automated deployment template of Cruise Control for Amazon MSK
 Automated deployment template of Cruise Control for Amazon MSK, a new AWS CloudFormation template that simplifies the deployment and management of Cruise Control and Prometheus for monitoring and rebalancing Amazon MSK clusters.
 Amazon MSK is a fully managed service that makes it easy to build and run applications that use Apache Kafka to process streaming data. With this new CloudFormation template, you can now seamlessly integrate Cruise Control and Prometheus to gain deeper insights into your Amazon MSK cluster's performance and optimize resource utilization.

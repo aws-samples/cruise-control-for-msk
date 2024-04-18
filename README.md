@@ -9,7 +9,7 @@ The CloudFormation template itself streamlines the deployment process by automat
 
 
 
-## Feature
+## Key features
 - Automated provisioning of an EC2 instance with Cruise Control and Prometheus pre-configured, eliminating the need for manual setup and configuration.
 - Support for Amazon MSK provisioned mode cluster.
 - Flexible authentication with PlainText or IAM. 

@@ -64,7 +64,7 @@ After the stack is created, the following outputs will be available:
 
 3. Update the `capacityCores.json` file according to the instance type of your Kafka cluster nodes. The example provided in the file is for the m5.large instance type.
 4. Upload the modified `targets.json`, `prometheus.yml`, and `capacityCores.json` files to an S3 bucket.
-5. Create a new CloudFormation stack using the provided CloudFormation template (`msk-cruise-control-deploy.yaml`), specifying the required parameter values, such as the S3 bucket name and object keys for the uploaded files.
+5. Create a new CloudFormation stack using the provided CloudFormation template [msk-cruise-control-deploy.yaml](`msk-cruise-control-deploy.yaml`), specifying the required parameter values, such as the S3 bucket name and object keys for the uploaded files.
 6. Once the CloudFormation stack creation is complete, use the output URLs provided by CloudFormation to access the Prometheus and Cruise Control web UI. **However, please allow an additional 15 minutes before accessing those URLs, as the installation of Cruise Control may still be in progress.**
 
 

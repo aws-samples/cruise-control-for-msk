@@ -31,7 +31,7 @@ The CloudFormation template itself streamlines the deployment process by automat
 
 The following parameters need to be provided when creating the CloudFormation stack:
 
-- `InstanceType`: The EC2 instance type for the web server (default: `m5.large`).
+- `InstanceType`: The EC2 instance type for the deployment (default: `m5.large`).
 - `targetjsonpath`: The S3 location of the `targets.json` file for Prometheus.
 - `prometheusymlpath`: The S3 location of the `prometheus.yml` file for Prometheus.
 - `AuthType`: The authentication type for the MSK cluster (default: `IAM`).

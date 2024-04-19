@@ -22,9 +22,9 @@ The CloudFormation template itself streamlines the deployment process by automat
 - An existing Amazon MSK Kafka cluster.
 - Enable open monitoring with [Prometheus] (https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html).
 - An S3 bucket with the following files:
-  - [`targets.json`](config\targets.json) (Prometheus targets configuration).
-  - [`prometheus.yml`](prometheus.yml) (Prometheus configuration).
-  - [`capacityCores.json`](config\capacityCores.json) (Cruise Control capacity configuration).
+  - [`targets.json`](config/targets.json) (Prometheus targets configuration).
+  - [`prometheus.yml`](config/prometheus.yml) (Prometheus configuration).
+  - [`capacityCores.json`](config/capacityCores.json) (Cruise Control capacity configuration).
 - An EC2 security group that has access to your target MSK cluster. The simplest approach would be to use the same security group attached to your MSK cluster, which includes a self-referencing inbound rule allowing all traffic.
 
 ## Parameters

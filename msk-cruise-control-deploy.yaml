@@ -147,6 +147,7 @@ Resources:
             wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.9/aws-msk-iam-auth-1.1.9-all.jar && mv aws-msk-iam-auth-1.1.9-all.jar cruise-control/build/libs/
           fi
           echo "prometheus.server.endpoint=localhost:9090" >> config/cruisecontrol.properties
+          echo "topics.excluded.from.partition.movement=__consumer_offsets.*|__amazon_msk_canary.*|__amazon_msk_connect.*" >> config/cruisecontrol.properties
           
           wget https://github.com/linkedin/cruise-control-ui/releases/download/v0.3.4/cruise-control-ui-0.3.4.tar.gz
           tar -xvzf cruise-control-ui-0.3.4.tar.gz

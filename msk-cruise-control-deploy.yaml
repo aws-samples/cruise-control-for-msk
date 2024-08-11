@@ -193,7 +193,7 @@ Outputs:
       - - 'http://'
         - !GetAtt 
           - WebServerInstance
-          - PrivateIp
+          - PublicDnsName
         - ':9090'
   CruiseControlURL:
     Description: URL for Cruise control web UI
@@ -202,5 +202,5 @@ Outputs:
       - - 'http://'
         - !GetAtt 
           - WebServerInstance
-          - PrivateIp
+          - PublicDnsName
         - ':9091'

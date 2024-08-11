@@ -26,6 +26,7 @@ The CloudFormation template itself streamlines the deployment process by automat
   - [`prometheus.yml`](config/prometheus.yml) (Prometheus configuration).
   - [`capacityCores.json`](config/capacityCores.json) (Cruise Control capacity configuration).
 - An EC2 security group that has access to your target MSK cluster. The simplest approach would be to use the same security group attached to your MSK cluster, which includes a self-referencing inbound rule allowing all traffic.
+- The MSK security group should also have inbound rule to port 11001 and 11002 from the security group attached to the cruise control instance.
 
 ## Parameters
 
